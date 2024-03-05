@@ -13,6 +13,18 @@ def api_add_service_entry():
         return jsonify({"error": "Unauthorized"}), 403
     
     data = request.json
-    # Extract and validate data from request.json
-    # Call add_service_entry(...) with the validated data
+     # Define the filename where JSON data will be stored
+    filename = "service_entries.json"
+    
+    # Prepare the data to write, including a timestamp for when the request was received
+    data_to_write = {
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "data": data
+    }
+    
+    # Write the data to a file, appending to the file if it already exists
+    with open(filename, "a") as file:
+        json.dump(data_to_write, file)
+        file.write("\n")  # Ensure each entry is on a new line
+
     return jsonify({"message": "Service entry added successfully"}), 201
