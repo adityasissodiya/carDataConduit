@@ -1,54 +1,60 @@
-# CarDataConduit: Digital Product Passports for Sustainable Mobility
+### Application Structure
 
-## Overview
-CarDataConduit is a project aimed at developing a secure, scalable framework for digital product passports.
+The Flask application is structured into several key components:
 
-## Features
-- **Digital Product Passport Creation**: Generate secure, verifiable digital passports for vehicles.
-- **Attribute-Based Access Control (ABAC)**: Securely manage data access based on user attributes and policies.
-- **Environmental Impact Tracking**: Monitor and report on the environmental impact of vehicles, including CO2 emissions and resource usage.
-- **Lifecycle Traceability**: Track the entire lifecycle of a vehicle to ensure responsible manufacturing and disposal practices.
+- `app/__init__.py`: Initializes the Flask app and registers blueprints.
+- `app/models.py`: Contains the RDF model and functions for interacting with the RDF graph, including adding service entries.
+- `app/views.py`: Defines the API endpoints, including the secured endpoint for adding service entries.
+- `app/auth.py`: Implements the simple token-based authentication and ABAC policy checks.
 
-## Getting Started
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+### Key Features
 
-### Prerequisites
-- Docker
-- Python 3.8+
-- Flask
+- **Simple Token-Based Authentication**: A basic authentication mechanism that uses pre-defined tokens to authenticate API requests.
+- **Attribute-Based Access Control (ABAC)**: Ensures that only authorized entities, such as certified workshops, can perform specific actions (e.g., adding service entries).
 
-### Installation
-1. **Clone the repository**
-```bash
-git clone https://github.com/adityasissodiya/carDataConduit
-```
+### Setting Up the Project
 
-2. **Build the Docker container**
-```bash
-docker build -t cardataconduit .
-```
+1. Install required Python packages from `requirements.txt` using pip:
 
-3. **Run the container**
-```bash
-docker run -p 5000:5000 cardataconduit
-```
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-### Usage
-To interact with the system, use the provided API endpoints:
+2. Run the Flask application locally:
 
-- **Create Digital Passport**: `POST /api/passport/create`
-- **Update Service Record**: `POST /api/service/update`
-- **Query Vehicle Data**: `GET /api/vehicle/{id}`
+    ```bash
+    flask run
+    ```
 
-See the API documentation for more details on request and response formats.
+### Testing the API
 
-### Running Tests
-Execute the following command to run the automated test suite:
-```bash
-python -m unittest discover tests
-```
+To test the `/add_service_entry` API endpoint with Postman:
 
-## Built With
-- [Flask](https://flask.palletsprojects.com/) - The web framework used
-- [RDFLib](https://rdflib.readthedocs.io/) - For managing RDF data
-- [Docker](https://www.docker.com/) - Containerization platform
+1. **Configure the Request:**
+    - Set the request method to `POST`.
+    - Use the endpoint URL: `http://localhost:5000/add_service_entry`.
+    - Add a header: `Content-Type` set to `application/json`.
+    - Add an authorization header: `Authorization` with the value set to one of the pre-defined tokens.
+
+2. **Set the Request Body:**
+    - Choose `raw` and format `JSON`, then input your data, for example:
+
+        ```json
+        {
+          "vin": "VIN12345XYZ",
+          "service_date": "2023-09-01",
+          "service_detail": "Oil change and tire rotation."
+        }
+        ```
+
+3. **Send the Request:**
+    - Click `Send` and observe the response.
+
+### Authentication Tokens
+
+Use one of the pre-defined tokens in the `Authorization` header to authenticate. For testing, the token `"certified_workshop_token"` can be used to simulate a request from a certified workshop. Ensure that the token you use matches one of those defined in `app/auth.py`.
+
+### Important Considerations
+
+- This project uses a simplified authentication system for demonstration purposes. For production environments, consider using a more robust authentication mechanism.
+- The application's ABAC system is designed to demonstrate basic access control. Adjust the access control policies in `app/auth.py` according to your specific requirements.
